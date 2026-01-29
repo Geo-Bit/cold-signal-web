@@ -1,0 +1,197 @@
+/* Cold Signal — Retro Terminal Styling */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg: #0a0a0a;
+  --fg: #00ffcc;
+  --fg-dim: #009977;
+  --fg-amber: #00ffcc;
+  --fg-red: #ff4444;
+  --fg-cyan: #00ffcc;
+  --fg-muted: #555555;
+  --input-bg: #111111;
+  --scanline: rgba(0, 255, 200, 0.02);
+  --font: 'Courier New', 'Consolas', 'Liberation Mono', monospace;
+}
+
+html, body {
+  height: 100%;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font);
+  font-size: 14px;
+  line-height: 1.5;
+  overflow: hidden;
+}
+
+/* CRT Scanline Overlay */
+body::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    var(--scanline) 2px,
+    var(--scanline) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* CRT slight curvature vignette */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 60%,
+    rgba(0, 0, 0, 0.4) 100%
+  );
+  pointer-events: none;
+  z-index: 9998;
+}
+
+#terminal {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 10px 15px;
+  scroll-behavior: smooth;
+}
+
+#output {
+  flex: 1;
+}
+
+#output pre {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  margin: 0;
+  padding: 0;
+  font-family: var(--font);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+#output pre.input-echo {
+  color: var(--fg-amber);
+  margin-top: 6px;
+}
+
+#output pre.game-output {
+  color: var(--fg);
+  margin-bottom: 6px;
+}
+
+#output div.game-output {
+  margin-bottom: 6px;
+}
+
+#prompt-line {
+  display: flex;
+  align-items: center;
+  padding: 4px 0 10px 0;
+  flex-shrink: 0;
+}
+
+#prompt-label {
+  color: var(--fg-amber);
+  font-family: var(--font);
+  font-size: 14px;
+  margin-right: 6px;
+  flex-shrink: 0;
+  user-select: none;
+}
+
+#input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--fg);
+  font-family: var(--font);
+  font-size: 14px;
+  line-height: 1.5;
+  caret-color: var(--fg);
+}
+
+#input::placeholder {
+  color: var(--fg-muted);
+}
+
+/* Blinking cursor effect */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+#input:focus {
+  animation: none;
+}
+
+/* Scrollbar styling */
+#terminal::-webkit-scrollbar {
+  width: 6px;
+}
+
+#terminal::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+
+#terminal::-webkit-scrollbar-thumb {
+  background: var(--fg-dim);
+  border-radius: 3px;
+}
+
+#terminal::-webkit-scrollbar-thumb:hover {
+  background: var(--fg);
+}
+
+/* Selection styling */
+::selection {
+  background: var(--fg);
+  color: var(--bg);
+}
+
+/* Mobile adjustments */
+@media (max-width: 600px) {
+  html, body {
+    font-size: 12px;
+  }
+
+  #terminal {
+    padding: 6px 8px;
+  }
+
+  #output pre {
+    font-size: 12px;
+  }
+
+  #input {
+    font-size: 16px; /* Prevents iOS zoom on focus */
+  }
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  body::after {
+    display: none;
+  }
+}
